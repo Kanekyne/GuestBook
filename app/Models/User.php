@@ -3,12 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use MongoDB\Laravel\Eloquent\Model as EloquentModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Notifications\Notifiable;
+use MongoDB\Laravel\Eloquent\Model as EloquentModel;
 
-class User extends Authenticatable{
+
+class User extends EloquentModel implements AuthenticatableContract
+{
 
     protected $connection = 'mongodb';
     protected $collection = 'users'; // Definimos la colección en MongoDB
@@ -27,6 +29,45 @@ class User extends Authenticatable{
         return $this->role === 'admin';
     }
 
-    #sirve?
+    /**
+     * Implementación de los métodos requeridos por AuthenticatableContract
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'email';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->email;
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
+
+    public function getRememberToken()
+    {
+        return $this->remember_token ?? null;
+    }
+
+    public function setRememberToken($value)
+    {
+        $this->remember_token = $value;
+    }
+
+    public function getRememberTokenName()
+    {
+        return 'remember_token';
+    }
+
+    public function getAuthPasswordName()
+    {
+        return 'password';
+    }
+
+
+    #sirve?, sip, sirvió
 
 }

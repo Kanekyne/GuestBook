@@ -8,7 +8,7 @@ use App\Models\Event;
 
 class GuestbookEntryController extends Controller
 {
-        public function index($eventId)
+    public function index($eventId)
     {
         $entries = GuestbookEntry::where('event_id', $eventId)
             ->orderBy('created_at', 'desc')
@@ -17,7 +17,12 @@ class GuestbookEntryController extends Controller
         return response()->json($entries);
     }
 
-        /**
+
+
+
+
+
+    /**
      * Agregar una entrada al guestbook de un evento.
      */
     public function store(Request $request, $eventId)
@@ -45,8 +50,8 @@ class GuestbookEntryController extends Controller
 
         return response()->json(['message' => 'Mensaje agregado con éxito.', 'entry' => $entry]);
     }
-    
-        /**
+
+    /**
      * Eliminar una entrada del guestbook (solo admin).
      */
     public function destroy($entryId)
@@ -56,7 +61,4 @@ class GuestbookEntryController extends Controller
 
         return response()->json(['message' => 'Mensaje eliminado con éxito.']);
     }
-
-
-
 }

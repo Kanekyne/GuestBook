@@ -7,7 +7,7 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-   /**
+    /**
      * Mostrar todos los eventos activos.
      */
     public function index()
@@ -16,7 +16,17 @@ class EventController extends Controller
         return response()->json($events);
     }
 
-       /**
+    public function showEvents()
+    {
+        $events = Event::where('status', 'active')->get();
+        // Verifica que eventos existen antes de pasarlos a la vista
+        if ($events->isEmpty()) {
+            return view('events')->with('message', 'No hay eventos activos en este momento.');
+        }
+        return view('events', compact('events'));
+    }
+
+    /**
      * Crear un nuevo evento (solo admin).
      */
     public function store(Request $request)
@@ -35,7 +45,7 @@ class EventController extends Controller
         return response()->json(['message' => 'Evento creado con éxito', 'event' => $event]);
     }
 
-     /**
+    /**
      * Editar un evento.
      */
     public function update(Request $request, $id)
@@ -46,8 +56,8 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Evento actualizado', 'event' => $event]);
     }
-    
-        /**
+
+    /**
      * Desactivar un evento.
      */
     public function deactivate($id)
@@ -57,5 +67,4 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Evento desactivado']);
     }
-
 }
