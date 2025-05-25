@@ -3,14 +3,31 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GuestbookEntryController;
+use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Auth;
+
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Route::get('/dashboard', function () {
+//     #return view('dashboard');
+//     redirect('/events');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+
+
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    if (Auth::check()) {
+        return Auth::user()->isAdmin() ? redirect('/admin/panel') : redirect('/events');
+    }
+    return redirect('/login');
+})->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -19,7 +36,39 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/panel', function () {
+        return view('admin_panel');
+    })->name('admin.panel');
+
+
+// Route::get('/dashboard', function () {
+//     if (Auth::check()) {
+//         return Auth::user()->isAdmin() ? redirect('/admin/panel') : redirect('/events');
+//     }
+//     return redirect('/login');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+    
+
+    Route::get('/admin/users', [AdminController::class, 'listUsers']);
+    Route::post('/admin/users/{user}/change-role', [AdminController::class, 'changeUserRole']);
+    Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
+
+    Route::get('/admin/events', [AdminController::class, 'listEvents']);
+    Route::post('/admin/events', [AdminController::class, 'createEvent']);
+    Route::put('/admin/events/{event}', [AdminController::class, 'updateEvent']);
+    Route::delete('/admin/events/{event}', [AdminController::class, 'deleteEventMessage']);
+});
+
+
+
+
+
 Route::get('/events', [EventController::class, 'showEvents']); // Página de eventos
+Route::get('/events/{eventId}/guestbook', [GuestbookEntryController::class, 'showGuestbook'])->name('guestbook.show');
+Route::post('/events/{eventId}/guestbook', [GuestbookEntryController::class, 'store']);
+
 
 
 require __DIR__.'/auth.php';

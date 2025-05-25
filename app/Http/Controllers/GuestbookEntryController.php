@@ -18,6 +18,13 @@ class GuestbookEntryController extends Controller
     }
 
 
+    public function showGuestbook($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+        $entries = GuestbookEntry::where('event_id', $eventId)->orderBy('created_at', 'desc')->get();
+
+        return view('guestbook', compact('event', 'entries'));
+    }
 
 
 
@@ -48,7 +55,9 @@ class GuestbookEntryController extends Controller
             'created_at' => now(),
         ]);
 
-        return response()->json(['message' => 'Mensaje agregado con éxito.', 'entry' => $entry]);
+        #return response()->json(['message' => 'Mensaje agregado con éxito.', 'entry' => $entry]);
+        return redirect()->route('guestbook.show', ['eventId' => $eventId])
+            ->with('success', 'Mensaje agregado con éxito.');
     }
 
     /**
