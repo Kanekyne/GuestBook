@@ -15,24 +15,15 @@
         @elseif($events->isEmpty())
             <p class="text-center text-warning">No hay eventos disponibles en este momento.</p>
         @else
-            <h1 class="text-center">Bienvenido, {{ Auth::user()->name }}! 🎉</h1>
+            <h1 class="text-center">Bienvenid@! 🎉</h1>
             <p class="text-center">Aquí están los eventos activos en los que puedes participar.</p>
 
-            use App \Models\User
-
-            User::create([
-            'name' => 'Admin',
-            'email' => '2@2.2',
-            'password' => bcrypt('22222222'),
-            'role' => 'admin'
-            ]);
-            App\Models\User
-
-
-
+            @if ($events->isEmpty())
+                <p class="text-center text-warning">No hay eventos disponibles en este momento.</p>
+            @endif
             <div class="row">
                 @foreach ($events as $event)
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-4"> <!-- Cada tarjeta ocupa 1/3 del ancho -->
                         <div class="card">
                             <div class="card-body">
                                 <h3 class="card-title">{{ $event->name }}</h3>
@@ -41,9 +32,6 @@
                                 <p class="card-text"><strong>Fecha de cierre:</strong> {{ $event->closed_at }}</p>
                                 <a href="{{ url('/events/' . $event->_id . '/guestbook') }}" class="btn btn-primary">Ver
                                     libro de visitas</a>
-                                <a href="{{ url('/events/' . $event->_id . '/guestbook') }}" class="btn btn-primary">Ver
-                                    libro de visitas</a>
-
                             </div>
                         </div>
                     </div>
